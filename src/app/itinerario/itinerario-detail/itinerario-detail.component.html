@@ -41,8 +41,8 @@
 
       @for (day of days; track day.getTime()) {
       <div class="day-header">
-        <div class="day-name">{{ getDayName(day) }}</div>
-        <div class="day-date">{{ getDayNumber(day) }}</div>
+        <div class="day-name">{{ obtenerNombreDia(day) }}</div>
+        <div class="day-date">{{ obtenerNumeroDia(day) }}</div>
       </div>
       }
     </div>
@@ -73,13 +73,13 @@
         </div>
 
         <!-- Preview -->
-        @for (preview of previewByDay[dayKey(day)]; track $index) {
+        @for (preview of previewByDay[claveDia(day)]; track $index) {
         <div class="selection-preview" [style.top.px]="preview.top" [style.height.px]="preview.height">
         </div>
         }
 
         <!-- Items -->
-        @for (item of itemsByDay[dayKey(day)]; track item._uid) {
+        @for (item of itemsByDay[claveDia(day)]; track item._uid) {
         <div class="item" [ngClass]="item.tipo" [style.top.px]="item.top" [style.height.px]="item.height"
           (click)="openDetalle(item)">
 

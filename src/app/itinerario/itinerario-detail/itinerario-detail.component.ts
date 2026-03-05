@@ -21,6 +21,7 @@ import { MessageService } from 'primeng/api';
 import { Util } from '../../core/commons/util';
 import { ViajeService } from '../../core/services/viaje.service';
 import { ItinerarioDetailModalComponent } from '../itinerario-detail-modal/itinerario-detail-modal.component';
+import { forkJoin } from 'rxjs';
 
 export interface CalendarItem extends ItinerarioItem {
   top: number;
@@ -43,7 +44,7 @@ export class ItinerarioDetailComponent implements OnInit {
   @HostListener('document:keydown.escape')
   onEscape() {
     if (this.isSelecting) {
-      this.cancelSelection();
+      this.borrarSeleccion();
       this.previewByDay = {};
     }
   }
@@ -62,8 +63,8 @@ export class ItinerarioDetailComponent implements OnInit {
   hours: string[] = [];
   itemsByDay: Record<string, CalendarItem[]> = {};
 
-  viajeInicio!: Date;
-  viajeFin!: Date;
+  viajeInicio!: string;
+  viajeFin!: string;
   monedaBase!: string;
   viajeId!: number;
   ciudadesDelViaje: { label: string; value: number }[] = [];
@@ -83,45 +84,31 @@ export class ItinerarioDetailComponent implements OnInit {
   ngOnInit(): void {
     this.viajeId = Number(this.route.snapshot.paramMap.get('id'));
 
-    const state = history.state as {
-      itinerario?: ItinerarioItem[];
-      fechaInicio?: string | Date;
-      fechaFin?: string | Date;
-      monedaBase?: string;
-    };
-
     this.viajeService.obtenerCiudades(this.viajeId).subscribe(ciudades => {
       this.ciudadesDelViaje = ciudades.map(c => ({
         label: `${c.nombre}`,
         value: c.id
       }));
+      this.cdr.markForCheck();
     });
 
-    if (!state?.fechaInicio || !state?.fechaFin) {
-      this.reset();
-      return;
-    }
-
-    this.viajeInicio = Util.parseLocalDate(state.fechaInicio);
-    this.viajeFin = Util.parseLocalDate(state.fechaFin);
-
-    this.monedaBase = state.monedaBase ?? 'USD';
-
-    this.items = (state.itinerario ?? []).map(item => ({
-      ...item,
-      inicio: new Date(item.inicio),
-      fin: new Date(item.fin),
-      origen: item.origen,
-      destino: item.destino,
-      medioTransporte: item.medioTransporte,
-      costo: item.costo,
-      costoEstimado: item.costoEstimado,
-      adjuntoId: item.adjuntoId
-    }));
-
-    this.buildDaysFromViaje();
-    this.buildHours();
-    this.mapItems();
+    forkJoin({
+      viaje: this.viajeService.obtenerViaje(this.viajeId),
+      items: this.itinerarioService.obtenerItinerario(this.viajeId)
+    }).subscribe({
+      next: ({ viaje, items }) => {
+        this.monedaBase = viaje.monedaBase;
+        this.viajeInicio = viaje.fechaInicio;
+        this.viajeFin = viaje.fechaFin;
+        
+        this.buildDaysFromViaje();
+        this.buildHours();
+        this.items = items ?? [];
+        this.mapItems();
+        this.cdr.markForCheck();
+      },
+      error: err => console.error(err)
+    });
   }
 
   public obtenerNombreCiudad(ciudadId: any): string | undefined {
@@ -148,7 +135,7 @@ export class ItinerarioDetailComponent implements OnInit {
     this.isSelecting = true;
   }
 
-  cancelSelection(): void {
+  borrarSeleccion(): void {
     this.selectionMode = 'NONE';
     this.selectionStart = null;
     this.selectionEnd = null;
@@ -160,7 +147,7 @@ export class ItinerarioDetailComponent implements OnInit {
     if (!this.isSelecting) return;
 
     const slotStart = Util.slotToDate(day, slotIndex);
-    const slotEnd = this.endExclusive(slotStart);
+    const slotEnd = this.terminarExclusivo(slotStart);
 
     if (!this.selectionStart) {
       this.selectionStart = slotStart;
@@ -181,7 +168,7 @@ export class ItinerarioDetailComponent implements OnInit {
         summary: 'Rango inválido',
         detail: 'El rango se superpone con otro elemento.'
       });
-      this.cancelSelection();
+      this.borrarSeleccion();
     }
   }
 
@@ -189,7 +176,7 @@ export class ItinerarioDetailComponent implements OnInit {
     if (!this.isSelecting || !this.selectionStart) return;
 
     const slotStart = Util.slotToDate(day, slotIndex);
-    this.selectionEnd = this.endExclusive(slotStart);
+    this.selectionEnd = this.terminarExclusivo(slotStart);
     this.normalizeSelection();
     this.updatePreview();
   }
@@ -221,7 +208,7 @@ export class ItinerarioDetailComponent implements OnInit {
       const minutes = (start - dayStart.getTime()) / 60000;
       const duration = (end - start) / 60000;
 
-      result[this.dayKey(day)] = [{
+      result[this.claveDia(day)] = [{
         top: (minutes / Util.SLOT_MINUTES) * Util.PX_PER_SLOT,
         height: (duration / Util.SLOT_MINUTES) * Util.PX_PER_SLOT
       }];
@@ -232,16 +219,16 @@ export class ItinerarioDetailComponent implements OnInit {
 
   private confirmRange(): void {
     this.selectionMode === 'ACTIVIDAD'
-      ? this.openActividadModal()
-      : this.openTrayectoModal();
+      ? this.abrirModalActividad()
+      : this.abrirModalTrayecto();
   }
 
   private buildDaysFromViaje(): void {
     const days: Date[] = [];
-    const current = new Date(this.viajeInicio);
+    const current = Util.parseLocalDate(this.viajeInicio);
     current.setHours(0, 0, 0, 0);
 
-    const end = new Date(this.viajeFin);
+    const end = Util.parseLocalDate(this.viajeFin);
     end.setHours(0, 0, 0, 0);
 
     while (current <= end) {
@@ -265,34 +252,33 @@ export class ItinerarioDetailComponent implements OnInit {
 
   private mapItems(): void {
     const result: Record<string, CalendarItem[]> = {};
-    this.days.forEach(d => result[this.dayKey(d)] = []);
+    this.days.forEach(d => result[this.claveDia(d)] = []);
 
     this.items.forEach(item => {
       Util.splitItemByDay(item).forEach(segment => {
-        const key = this.dayKey(segment.inicio);
-        if (result[key]) result[key].push(segment);
+        const clave = this.claveDia(segment.inicio);
+        if (result[clave]) result[clave].push(segment);
       });
     });
-
     this.itemsByDay = result;
   }
 
-  dayKey(d: Date): string {
+  claveDia(d: Date): string {
     const y = d.getFullYear();
     const m = String(d.getMonth() + 1).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     return `${y}-${m}-${day}`;
   }
 
-  getDayName(d: Date): string {
+  obtenerNombreDia(d: Date): string {
     return Util.capitalize(this.dayFormatter.format(d));
   }
 
-  getDayNumber(d: Date): string {
+  obtenerNumeroDia(d: Date): string {
     return `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
   }
 
-  private endExclusive(date: Date): Date {
+  private terminarExclusivo(date: Date): Date {
     return new Date(date.getTime() + Util.SLOT_MINUTES * 60000);
   }
 
@@ -318,8 +304,7 @@ export class ItinerarioDetailComponent implements OnInit {
     });
   }
 
-
-  private openActividadModal(): void {
+  private abrirModalActividad(): void {
     const ref = this.dialogService.open(ActividadFormComponent, {
       header: 'Nueva actividad',
       width: '250px',
@@ -335,7 +320,7 @@ export class ItinerarioDetailComponent implements OnInit {
 
     ref.onClose.subscribe((actividad: Actividad | null) => {
       if (!actividad) {
-        this.cancelSelection();
+        this.borrarSeleccion();
         return;
       }
 
@@ -343,19 +328,18 @@ export class ItinerarioDetailComponent implements OnInit {
         .crearActividad(actividad, this.viajeId)
         .subscribe({
           next: () => {
-            this.reloadItinerario();
-            this.cancelSelection();
+            this.recargarItinerario();
+            this.borrarSeleccion();
           },
           error: err => {
             console.error('Error creando actividad', err);
-            this.cancelSelection();
+            this.borrarSeleccion();
           }
         });
     });
   }
 
-
-  private openTrayectoModal(): void {
+  private abrirModalTrayecto(): void {
     const ref = this.dialogService.open(TrayectoFormComponent, {
       header: 'Nuevo trayecto',
       width: '250px',
@@ -371,7 +355,7 @@ export class ItinerarioDetailComponent implements OnInit {
 
     ref.onClose.subscribe((trayecto: Trayecto | null) => {
       if (!trayecto) {
-        this.cancelSelection();
+        this.borrarSeleccion();
         return;
       }
 
@@ -379,24 +363,23 @@ export class ItinerarioDetailComponent implements OnInit {
         .crearActividad(trayecto, this.viajeId)
         .subscribe({
           next: () => {
-            this.reloadItinerario();
-            this.cancelSelection();
+            this.recargarItinerario();
+            this.borrarSeleccion();
           },
           error: err => {
             console.error('Error creando trayecto', err);
-            this.cancelSelection();
+            this.borrarSeleccion();
           }
         });
     });
   }
 
-
-  private reloadItinerario(): void {
+  private recargarItinerario(): void {
     this.itinerarioService
       .obtenerItinerario(this.viajeId)
       .subscribe({
         next: itinerario => {
-          this.items = Util.mapItinerario(itinerario).map(item => ({
+          this.items = itinerario.map(item => ({
             ...item,
             inicio: new Date(item.inicio),
             fin: new Date(item.fin)
@@ -429,5 +412,4 @@ export class ItinerarioDetailComponent implements OnInit {
       }
     });
   }
-
 }

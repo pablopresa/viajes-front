@@ -11,11 +11,7 @@ import { ItinerarioService } from "../../core/services/itinerario.service";
 @Component({
   selector: 'app-itinerario-detalle-modal',
   standalone: true,
-  imports: [
-    CommonModule,
-    ButtonModule,
-    FileUploadModule
-  ],
+  imports: [CommonModule, ButtonModule, FileUploadModule],
   templateUrl: './itinerario-detail-modal.component.html'
 })
 export class ItinerarioDetailModalComponent {
@@ -33,16 +29,12 @@ export class ItinerarioDetailModalComponent {
     this.monedaBase = config.data.monedaBase;
   }
 
-  esActividad(): boolean {
+  public esActividad(): boolean {
     return this.item.tipo === 'ACTIVIDAD';
   }
 
-  esTrayecto(): boolean {
+  public esTrayecto(): boolean {
     return this.item.tipo === 'TRAYECTO';
-  }
-
-  adjuntarArchivo(): void {
-    this.fileUploader.choose();
   }
 
   public obtenerNombreCiudad(ciudadId: any): string | undefined {
@@ -69,7 +61,7 @@ export class ItinerarioDetailModalComponent {
     return ret;
   }
 
-  onFileSelected(event: any): void {
+  public agregarAdjunto(event: any): void {
     const file: File = event.files[0];
 
     if (!file) {
@@ -105,8 +97,6 @@ export class ItinerarioDetailModalComponent {
           fileName = decodeURIComponent(match[1]);
         }
       }
-
-      console.log("Descargando archivo con nombre " + fileName);
 
       // Crear link y disparar descarga
       const url = window.URL.createObjectURL(blob);

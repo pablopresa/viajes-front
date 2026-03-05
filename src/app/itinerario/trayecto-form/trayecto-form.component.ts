@@ -10,15 +10,7 @@ import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-trayecto-form',
-  imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    InputTextModule,
-    InputNumberModule,
-    TextareaModule,
-    ButtonModule,
-    SelectModule
-  ],
+  imports: [CommonModule, ReactiveFormsModule, InputTextModule, InputNumberModule, TextareaModule, ButtonModule, SelectModule],
   templateUrl: './trayecto-form.component.html',
   styleUrl: './trayecto-form.component.css',
 })
@@ -38,12 +30,12 @@ export class TrayectoFormComponent {
     this.fin = config.data.fin;
     this.monedaBase = config.data.monedaBase;
     this.form = this.fb.nonNullable.group({
-    medioTransporte: ['', Validators.required],
-    origenCiudadId: [null as number | null, Validators.required],
-    destinoCiudadId: [null as number | null, Validators.required],
-    duracionMinutos: [this.calcularDuracion(), Validators.min(1)],
-    costoEstimado: [null as number | null],
-  });
+      medioTransporte: ['', Validators.required],
+      origenCiudadId: [null as number | null, Validators.required],
+      destinoCiudadId: [null as number | null, Validators.required],
+      duracionMinutos: [this.calcularDuracion(), Validators.min(1)],
+      costoEstimado: [null as number | null],
+    });
   }
 
   mediosDeTransporte = [

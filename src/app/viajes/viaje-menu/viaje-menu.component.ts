@@ -11,6 +11,4 @@ export class ViajeMenuComponent {
 
   @Input() viaje!: Viaje;
 
-  
-
 }

@@ -12,12 +12,7 @@ import { Util } from "../../core/commons/util";
 
 @Component({
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    CardModule,
-    ButtonModule
-  ],
+  imports: [CommonModule, RouterModule, CardModule, ButtonModule],
   templateUrl: './viaje-detail.component.html',
   styleUrls: ['./viaje-detail.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -1,15 +1,18 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideRouter } from '@angular/router';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors, withInterceptorsFromDi } from '@angular/common/http';
 
 import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
+import { cacheInterceptor } from './core/interceptors/cache-interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideRouter(routes),
+    provideHttpClient(withInterceptorsFromDi(),
+      withInterceptors([cacheInterceptor])),
     provideHttpClient(),
     providePrimeNG({
       ripple: true,
@@ -20,7 +23,7 @@ export const appConfig: ApplicationConfig = {
         }
       },
       translation: {
-        noFileChosenMessage: 'Ningún archivo seleccionado',
+        noFileChosenMessage: '',
         choose: 'Seleccionar',
         upload: 'Subir',
         cancel: 'Cancelar'

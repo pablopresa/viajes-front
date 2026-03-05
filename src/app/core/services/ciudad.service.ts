@@ -7,7 +7,7 @@ import { Ciudad } from "../models/ciudad";
 export class CiudadService {
   constructor(private http: HttpClient) { }
 
-  private readonly apiUrl = 'http://192.168.1.4:8080/api/ciudades';
+  private readonly apiUrl = '/api/ciudades';
 
   listar(): Observable<Ciudad[]> {
     return this.http.get<Ciudad[]>(`${this.apiUrl}`);

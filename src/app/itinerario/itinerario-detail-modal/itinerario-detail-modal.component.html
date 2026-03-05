@@ -27,7 +27,7 @@
     }
     @else {
     <p-fileUpload #fileUploader mode="basic" name="archivo" accept=".pdf,.jpg,.png" [customUpload]="true" [auto]="false"
-      [maxFileSize]="10000000" (onSelect)="onFileSelected($event)" chooseIcon="pi pi-upload"
+      [maxFileSize]="10000000" (onSelect)="agregarAdjunto($event)" chooseIcon="pi pi-upload"
       chooseLabel="Adjuntar archivo">
     </p-fileUpload>
     }

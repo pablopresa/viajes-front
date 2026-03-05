@@ -263,3 +263,8 @@
   background: #fce4ec;
   border-left: 4px solid #e91e63;
 }
+
+::ng-deep .p-dialog-header {
+  max-height: 4rem;
+  padding: 0.3rem 1rem 0 1rem;
+}

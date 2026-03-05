@@ -1,3 +1,4 @@
+import { HttpRequest } from "@angular/common/http";
 import { CalendarItem } from "../../itinerario/itinerario-detail/itinerario-detail.component";
 import { ItinerarioItem } from "../models/itinerario-item";
 
@@ -104,6 +105,18 @@ export class Util {
             const v = c === 'x' ? r : (r & 0x3 | 0x8);
             return v.toString(16);
         });
+    }
+
+    public static separarHttpRequest(consulta: HttpRequest<any>): any {
+        if (this.isNullOrUndefined(consulta)) {
+            return null;
+        }
+        const queryParamsConsulta = (consulta.params + '' != '') ? '?' + consulta.params : '';
+        return consulta.url + queryParamsConsulta;
+    }
+
+    public static isNullOrUndefined(valor: any) {
+        return valor == null || valor == undefined;
     }
 
 

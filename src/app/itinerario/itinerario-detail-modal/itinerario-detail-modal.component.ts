@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { DynamicDialogRef, DynamicDialogConfig } from "primeng/dynamicdialog";
 import { ItinerarioItem } from "../../core/models/itinerario-item";
@@ -12,6 +12,7 @@ import { ItinerarioService } from "../../core/services/itinerario.service";
   selector: 'app-itinerario-detalle-modal',
   standalone: true,
   imports: [CommonModule, ButtonModule, FileUploadModule],
+  changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './itinerario-detail-modal.component.html'
 })
 export class ItinerarioDetailModalComponent {

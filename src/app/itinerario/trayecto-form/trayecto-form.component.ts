@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule, NonNullableFormBuilder } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -12,6 +12,7 @@ import { SelectModule } from 'primeng/select';
   selector: 'app-trayecto-form',
   imports: [CommonModule, ReactiveFormsModule, InputTextModule, InputNumberModule, TextareaModule, ButtonModule, SelectModule],
   templateUrl: './trayecto-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './trayecto-form.component.css',
 })
 export class TrayectoFormComponent {

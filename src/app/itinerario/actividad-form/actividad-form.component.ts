@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, Validators, ReactiveFormsModule } from '@angular/forms';
 import { DynamicDialogConfig, DynamicDialogRef } from 'primeng/dynamicdialog';
@@ -21,6 +21,7 @@ import { SelectModule } from 'primeng/select';
     SelectModule
   ],
   templateUrl: './actividad-form.component.html',
+  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrl: './actividad-form.component.css'
 })
 export class ActividadFormComponent {

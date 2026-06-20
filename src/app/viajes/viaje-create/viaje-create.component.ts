@@ -128,7 +128,8 @@ export class ViajeCreateComponent implements OnInit {
 
       map.get(c.pais)!.items.push({
         label: c.nombre, // visible
-        value: c.id      // lo que se guarda
+        value: c.id, // lo que se guarda
+        pais: c.pais
       });
     });
 

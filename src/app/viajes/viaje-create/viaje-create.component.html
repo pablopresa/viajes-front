@@ -35,7 +35,7 @@
         <label for="ciudades">Ciudades a visitar</label>
         <p-multiSelect formControlName="ciudades" [options]="ciudadesAgrupadas" optionGroupLabel="label"
           optionGroupChildren="items" optionLabel="label" optionValue="value" filter="true" display="chip"
-          placeholder="Buscar ciudad" [group]="true" class="w-full">
+          placeholder="Buscar ciudad" [group]="true" filterBy="label,pais" class="w-full">
         </p-multiSelect>
 
       </div>

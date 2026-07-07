@@ -10,7 +10,7 @@ export const cacheInterceptor: HttpInterceptorFn = (request: HttpRequest<any>, n
   // Obtiene la URL de la solicitud
   const urlCompleta = Util.separarHttpRequest(request);
   // Si no es get,
-  if (request.method !== 'GET') {
+  if (request.method !== 'GET' || request.url.includes('/gastos')) {
     return next(request).pipe(
       tap(event => {
         if (event instanceof HttpResponse && event.ok) {

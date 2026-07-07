@@ -92,7 +92,8 @@ export class Util {
             origen: t.origen,
             destino: t.destino,
             medioTransporte: t.medioTransporte,
-            adjuntoId: t.adjuntoId
+            adjuntoId: t.adjuntoId,
+            distanciaKms: t.distanciaKms
         }));
 
         return [...actividades, ...trayectos]

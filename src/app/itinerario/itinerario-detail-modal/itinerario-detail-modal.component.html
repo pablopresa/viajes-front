@@ -1,6 +1,7 @@
 @let costo = item.costo ? item.costo : item.costoEstimado;
 <!-- @let costoEsEstimado = item.costoEstimado!! && !item.costo!!; -->
 
+<p-confirmDialog></p-confirmDialog>
 <div class="detalle-container">
 
   <!-- ACTIVIDAD -->
@@ -11,6 +12,7 @@
   <p><strong>Origen:</strong> {{ obtenerNombreCiudad(item.origen) }}</p>
   <p><strong>Destino:</strong> {{ obtenerNombreCiudad(item.destino) }}</p>
   <p><strong>Medio:</strong> {{ capitalize(item.medioTransporte) }}</p>
+  <p><strong>Distancia:</strong> {{ item.distanciaKms }} kms</p>
   }
 
   <p><strong>Inicio:</strong> {{ item.inicio | date:'dd/MM/yyyy HH:mm' }}</p>
@@ -31,6 +33,10 @@
       chooseLabel="Adjuntar archivo">
     </p-fileUpload>
     }
+  </div>
+
+  <div class="detalle-actions">
+    <button pButton type="button" label="Eliminar" class="p-button-danger" (click)="eliminarItem()"></button>
   </div>
 
 </div>

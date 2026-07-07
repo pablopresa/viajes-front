@@ -1,17 +1,19 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, OnInit, ChangeDetectionStrategy } from "@angular/core";
+import { Component, inject, ChangeDetectionStrategy, ViewChild } from "@angular/core";
 import { ButtonModule } from "primeng/button";
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService } from 'primeng/api';
 import { DynamicDialogRef, DynamicDialogConfig } from "primeng/dynamicdialog";
 import { ItinerarioItem } from "../../core/models/itinerario-item";
 import { Util } from "../../core/commons/util";
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
-import { ViewChild } from '@angular/core';
 import { ItinerarioService } from "../../core/services/itinerario.service";
 
 @Component({
   selector: 'app-itinerario-detalle-modal',
   standalone: true,
-  imports: [CommonModule, ButtonModule, FileUploadModule],
+  imports: [CommonModule, ButtonModule, FileUploadModule, ConfirmDialogModule],
+  providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.Eager,
   templateUrl: './itinerario-detail-modal.component.html'
 })
@@ -22,12 +24,16 @@ export class ItinerarioDetailModalComponent {
   item!: ItinerarioItem;
   ciudades: { label: string; value: number }[] = [];
   monedaBase!: string;
+  viajeId!: number;
 
   itinerarioService = inject(ItinerarioService);
+  confirmationService = inject(ConfirmationService);
+
   constructor(public ref: DynamicDialogRef, public config: DynamicDialogConfig) {
     this.item = config.data.item;
     this.ciudades = config.data.ciudades;
     this.monedaBase = config.data.monedaBase;
+    this.viajeId = config.data.viajeId;
   }
 
   public esActividad(): boolean {
@@ -107,6 +113,33 @@ export class ItinerarioDetailModalComponent {
       a.click();
 
       window.URL.revokeObjectURL(url);
+    });
+  }
+
+  public eliminarItem(): void {
+    this.confirmationService.confirm({
+      message: '¿Deseas eliminar este elemento del itinerario?',
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Eliminar',
+      rejectLabel: 'Cancelar',
+      accept: () => {
+        this.itinerarioService.eliminarActividad(this.item.id, this.viajeId).subscribe({
+          next: () => {
+            this.ref.close({ deleted: true });
+          },
+          error: err => {
+            console.error('Error eliminando elemento', err);
+            this.confirmationService.confirm({
+              message: 'No se pudo eliminar el elemento. Intenta nuevamente.',
+              header: 'Error',
+              icon: 'pi pi-times-circle',
+              acceptVisible: false,
+              rejectLabel: 'Cerrar'
+            });
+          }
+        });
+      }
     });
   }
 

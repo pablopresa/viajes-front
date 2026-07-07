@@ -15,15 +15,27 @@ export const VIAJE_ROUTES: Routes = [
         .then(c => c.ViajeCreateComponent)
   },
   {
-    path: ':id',
-    loadComponent: () =>
-      import('./viaje-detail/viaje-detail.component')
-        .then(c => c.ViajeDetailComponent)
-  },
-  {
     path: ':id/itinerario',
     loadComponent: () =>
       import('../itinerario/itinerario-detail/itinerario-detail.component')
         .then(c => c.ItinerarioDetailComponent)
+  },
+  {
+    path: ':id/gastos',
+    loadComponent: () =>
+      import('../gastos/gasto-list/gasto-list.component')
+        .then(c => c.GastoListComponent)
+  },
+  {
+    path: ':id/mapa',
+    loadComponent: () =>
+      import('../mapa/mapa.component')
+        .then(c => c.MapaComponent)
+  },
+  {
+    path: ':id',
+    loadComponent: () =>
+      import('./viaje-detail/viaje-detail.component')
+        .then(c => c.ViajeDetailComponent)
   }
 ];

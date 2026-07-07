@@ -1,0 +1,100 @@
+.mapa-container {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.mapa-header {
+  text-align: center;
+}
+
+.mapa-header h2 {
+  margin: 0 0 0.25rem;
+}
+
+.mapa-header p {
+  margin: 0;
+  color: #666;
+}
+
+.mapa-state {
+  color: #666;
+  font-style: italic;
+}
+
+.mapa-state.error {
+  color: #b42318;
+}
+
+.mapa-viewport {
+  position: relative;
+  width: min(100%, 900px);
+  display: inline-block;
+}
+
+.mapa-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: block;
+}
+
+.mapa-pin {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.mapa-pin-dot {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #d9480f;
+  border: 0.5px solid white;
+  box-shadow: 0 0 0 2px rgba(217, 72, 15, 0.16);
+}
+
+.mapa-pin-label {
+  margin-top: 0.15rem;
+  background: rgba(255, 255, 255, 0.92);
+  padding: 0.1rem 0.3rem;
+  border-radius: 999px;
+  font-size: 0.55rem;
+  font-weight: 600;
+  color: #333;
+  white-space: nowrap;
+}
+
+.mapa-list {
+  width: min(100%, 900px);
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #444;
+}
+
+.calendar-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: transparent;
+  border: none;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}

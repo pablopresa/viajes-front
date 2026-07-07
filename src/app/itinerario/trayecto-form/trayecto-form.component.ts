@@ -24,6 +24,8 @@ export class TrayectoFormComponent {
   readonly fin!: Date;
   readonly monedaBase!: string;
   readonly ciudades = this.config.data.ciudades as { label: string; value: number; }[];
+  ciudadesOrigen: { label: string; value: number; }[] = [];
+  ciudadesDestino: { label: string; value: number; }[] = [];
   form!: any;
 
   constructor(private config: DynamicDialogConfig) {
@@ -37,6 +39,28 @@ export class TrayectoFormComponent {
       duracionMinutos: [this.calcularDuracion(), Validators.min(1)],
       costoEstimado: [null as number | null],
     });
+
+    this.actualizarListasCiudades();
+
+    this.form.controls.origenCiudadId.valueChanges.subscribe(() => {
+      this.actualizarListasCiudades();
+    });
+
+    this.form.controls.destinoCiudadId.valueChanges.subscribe(() => {
+      this.actualizarListasCiudades();
+    });
+  }
+
+  private actualizarListasCiudades(): void {
+    const origenId = this.form.controls.origenCiudadId.value;
+    const destinoId = this.form.controls.destinoCiudadId.value;
+
+    this.ciudadesOrigen = this.ciudades.filter((ciudad) => ciudad.value !== destinoId);
+    this.ciudadesDestino = this.ciudades.filter((ciudad) => ciudad.value !== origenId);
+
+    if (destinoId !== null && destinoId === origenId) {
+      this.form.controls.destinoCiudadId.setValue(null);
+    }
   }
 
   mediosDeTransporte = [

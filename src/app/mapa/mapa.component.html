@@ -1,0 +1,38 @@
+<div class="calendar-toolbar">
+    <button class="toolbar-btn back" type="button" (click)="goBack()">
+        <i class="pi pi-arrow-left"></i>
+        <span>Volver</span>
+    </button>
+</div>
+
+<div class="mapa-container">
+    <div class="mapa-header">
+        <h2>Mapa del viaje</h2>
+        @if(!cargando && ciudades.length) {
+        <p>{{ ciudades.length }} ciudades cargadas</p>
+        }
+    </div>
+
+    @if(cargando){
+    <div class="mapa-state">Cargando ciudades…</div>
+    }
+    @if(!cargando && error){
+    <div class="mapa-state error">{{ error }}</div>
+    }
+
+    <div *ngIf="!cargando && !error" class="mapa-viewport">
+        <img src="/mapamundi.webp" alt="Mapa del mundo" class="mapa-image" />
+
+        <div *ngFor="let ciudad of ciudades" class="mapa-pin" [style.left]="((ciudad.longitud + 180) / 360) * 100 + '%'"
+            [style.top]="((90 - ciudad.latitud) / 180) * 100 + '%'" [attr.title]="ciudad.nombre">
+            <span class="mapa-pin-dot"></span>
+            <!-- <span class="mapa-pin-label">{{ ciudad.nombre }}</span> -->
+        </div>
+    </div>
+
+    <!-- <ul *ngIf="ciudades.length" class="mapa-list">
+        <li *ngFor="let ciudad of ciudades">
+            {{ ciudad.nombre }} · {{ ciudad.pais }}
+        </li>
+    </ul> -->
+</div>

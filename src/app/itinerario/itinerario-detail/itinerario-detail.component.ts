@@ -403,12 +403,19 @@ export class ItinerarioDetailComponent implements OnInit {
       data: {
         item,
         ciudades: this.ciudadesDelViaje,
-        monedaBase: this.monedaBase
+        monedaBase: this.monedaBase,
+        viajeId: this.viajeId
       }
-    })?.onClose.subscribe(adjunto => {
-      if (adjunto) {
-        // actualizar UI
-        item.adjuntoId = adjunto.id;
+    })?.onClose.subscribe(result => {
+      if (!result) return;
+
+      if (result.deleted) {
+        this.recargarItinerario();
+        return;
+      }
+
+      if (result.id) {
+        item.adjuntoId = result.id;
       }
     });
   }

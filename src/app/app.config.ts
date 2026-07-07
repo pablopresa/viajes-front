@@ -26,7 +26,16 @@ export const appConfig: ApplicationConfig = {
         noFileChosenMessage: '',
         choose: 'Seleccionar',
         upload: 'Subir',
-        cancel: 'Cancelar'
+        cancel: 'Cancelar',
+        clear: 'Limpiar',
+        today: 'Hoy',
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'],
+        dayNamesMin: ['Do', 'Lu', 'Ma', 'Mi', 'Ju', 'Vi', 'Sa'],
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+        firstDayOfWeek: 1,
+        dateFormat: 'dd/mm/yy'
       }
     })
   ]

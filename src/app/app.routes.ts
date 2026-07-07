@@ -13,6 +13,12 @@ export const routes: Routes = [
         .then(m => m.VIAJE_ROUTES)
   },
   {
+    path: 'mapa',
+    loadComponent: () =>
+      import('./mapa/mapa.component')
+        .then(m => m.MapaComponent)
+  },
+  {
     path: '**',
     redirectTo: 'viajes'
   }

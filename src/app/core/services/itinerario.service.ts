@@ -25,6 +25,10 @@ export class ItinerarioService {
     return this.http.post<ItinerarioItem>(`${this.apiUrl}/viajes/${viajeId}/actividades`, item);
   }
 
+  eliminarActividad(itemId: number, viajeId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/viajes/${viajeId}/actividades/${itemId}`);
+  }
+
   agregarAdjunto(form: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/adjuntos`, form);
   }

@@ -4,4 +4,6 @@ export interface Ciudad {
   nombre: string;
   pais: string;
   orden: number;
+  latitud: number;
+  longitud: number;
 }
